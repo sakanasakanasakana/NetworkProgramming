@@ -18,7 +18,7 @@ void commun(int sock){
 	char*message = "(」・ω・)」うー！(／・ω・)／にゃー！";
 	if(send(sock,message,strlen(message),0)!= strlen(message))
 	DieWithError("send() set a message of unexpected bytes");
-	if((len_r=recv(sock,buf,BUF_SIZE,0) <= 0))
+	if((len_r=recv(sock,buf,BUF_SIZE,0)) <= 0)
 	DieWithError("recv()failed");
 	buf[len_r] = '\0';
 	printf("%s\n",buf);

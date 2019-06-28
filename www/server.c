@@ -14,13 +14,28 @@ void DieWithError(char *errorMessage){
 
 void commum (int sock){
 	char buf[BUF_SIZE];
-	int len_r;
-	
+	int len_r; 
 	if((len_r=recv(sock,buf,BUF_SIZE,0)) <= 0)
 	DieWithError("recv()failed");
-	buf[len_r] = '\0';
-	
-	printf("%s\n",buf);
+	while((len_r=recv(sock,buf,BUF_SIZE,0)) > 0){
+		buf[len_r] = '\0';
+		printf("%s\n",buf);
+		
+	if(strstr(buf,"\n\n")){
+		break;
+	}
+	}
+	if(len_r <= 0){
+		DieWithError("send()sent a message of unexpected bytes");
+		printf("received HTTP Request.\n");
+	printf("HTTP/1.1 200OK \r\n");
+	printf("Content-Type:text/html;charset=utf-8\r\n");
+	printf("\n");
+	printf("<!DOCTYRE html><html><head><title>\n");
+	printf("ネットワークプログラミングのWebサイト\n");
+	printf("</title></head><body>ネットワークダイスキ</body></html>\n");
+	}
+
 	if(send(sock,buf,strlen(buf),0)!=strlen(buf))
 	DieWithError("send()sent a message of unexpected bytes");
 }

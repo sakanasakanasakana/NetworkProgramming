@@ -6,45 +6,73 @@
 #include <stdlib.h>
 
 #define BUF_SIZE 256
-
+//http://localhost/
 void DieWithError(char *errorMessage){
 	perror(errorMessage);
 	exit(1);
 }
-
 void commum (int sock){
 	char buf[BUF_SIZE];
+	char buf_old[BUF_SIZE];
+	char buf2[2*BUF_SIZE];
 	int len_r; 
-	if((len_r=recv(sock,buf,BUF_SIZE,0)) <= 0)
-	DieWithError("recv()failed");
+	char response[BUF_SIZE];
+	
+	buf_old[0] = '\0';
 	while((len_r=recv(sock,buf,BUF_SIZE,0)) > 0){
 		buf[len_r] = '\0';
-		printf("%s\n",buf);
+		sprintf(buf2,"%s%s",buf_old,buf);
 		
-	if(strstr(buf,"\n\n")){
+	if(strstr(buf,"\r\n\r\n")){
 		break;
 	}
 	}
-	if(len_r <= 0){
-		DieWithError("send()sent a message of unexpected bytes");
-		printf("received HTTP Request.\n");
-	printf("HTTP/1.1 200OK \r\n");
-	printf("Content-Type:text/html;charset=utf-8\r\n");
-	printf("\n");
-	printf("<!DOCTYRE html><html><head><title>\n");
-	printf("ƒlƒbƒgƒ[ƒNƒvƒƒOƒ‰ƒ~ƒ“ƒO‚ÌWebƒTƒCƒg\n");
-	printf("</title></head><body>ƒlƒbƒgƒ[ƒNƒ_ƒCƒXƒL</body></html>\n");
-	}
+		sprintf(buf_old, "%s",buf);
+	
+	if (len_r <= 0)
+		DieWithError("received() failed.");
+    
+    printf("received HTTP Request.\n");
+
+    sprintf(response, "HTTP/1.1 200 OK\r\n");
+    if(send(sock, response, strlen(response), 0) != strlen(response))
+        DieWithError("send() sent a message of unexpected bytes");
+    
+    sprintf(response, "Content-Type: text/html; charset=utf-8\r\n");
+    if(send(sock, response, strlen(response), 0) != strlen(response))
+        DieWithError("send() sent a message of unexpected bytes");
+        
+    sprintf(response, "\r\n");
+    if(send(sock, response, strlen(response), 0) != strlen(response))
+        DieWithError("send() sent a message of unexpected bytes");
+    
+    sprintf(response, "<!DOCTYPE html><html><head><title>");
+    if(send(sock, response, strlen(response), 0) != strlen(response))
+        DieWithError("send() sent a message of unexpected bytes");
+    
+    sprintf(response, "ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°ã®webã‚µã‚¤ãƒˆ");
+    if(send(sock, response, strlen(response), 0) != strlen(response))
+        DieWithError("send() sent a message of unexpected bytes");
+    
+    sprintf(response, "</title></head><body>ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ãƒ€ã‚¤ã‚¹ã‚­</body></html>");
+		if(send(sock, response, strlen(response), 0) != strlen(response))
+        DieWithError("send() sent a message of unexpected bytes");
+
 
 	if(send(sock,buf,strlen(buf),0)!=strlen(buf))
 	DieWithError("send()sent a message of unexpected bytes");
 }
 
 int main(int argc, char **argv){
-	int cliSock, servSock = socket(PF_INET,SOCK_STREAM,0);
-	struct sockaddr_in servAddress;
 	struct sockaddr_in clientAddress;
-	socklen_t szClientAddr;
+	unsigned int szClientAddr;
+	int cliSock;
+
+	int servSock = socket(PF_INET, SOCK_STREAM, 0);
+    if (servSock < 0)
+        DieWithError("socket() failed");
+    
+    struct sockaddr_in servAddress;
 	
 	servAddress.sin_family = AF_INET;
 	servAddress.sin_addr.s_addr = htonl(INADDR_ANY);

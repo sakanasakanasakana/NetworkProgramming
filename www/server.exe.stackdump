@@ -1,0 +1,7 @@
+Exception: STATUS_ACCESS_VIOLATION at eip=6115D363
+eax=00000100 ebx=00403062 ecx=00000010 edx=00000100 esi=00000000 edi=00000100
+ebp=0028C3E8 esp=0028C3E4 program=C:\NetworkProgramming\www\server.exe, pid 6976, thread main
+cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
+Stack trace:
+Frame     Function  Args
+0028C3E8  6115D363 (00000100, 0028C4B8, 00403062, 00000001)
